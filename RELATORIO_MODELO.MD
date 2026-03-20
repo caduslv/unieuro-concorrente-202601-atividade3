@@ -10,7 +10,19 @@
 
 # 1. Descrição do Problema
 
-Descreva o problema computacional resolvido pelo programa.
+# 1. Descrição do Problema
+
+O problema consiste no processamento de grandes volumes de arquivos de log contendo informações operacionais de um sistema.
+
+O objetivo é extrair métricas como número de linhas, palavras, caracteres e ocorrência de palavras-chave (erro, warning e info).
+
+O algoritmo utilizado realiza leitura sequencial dos arquivos e contagem de ocorrências.
+
+O objetivo da paralelização é reduzir o tempo de execução ao distribuir o processamento entre múltiplos processos.
+
+O volume de dados utilizado nos testes corresponde ao conjunto log2, contendo milhões de registros.
+
+A complexidade do algoritmo é O(n), onde n representa o número total de linhas dos arquivos.
 
 ## Orientações para preenchimento
 
