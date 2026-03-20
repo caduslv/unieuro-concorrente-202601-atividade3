@@ -1,7 +1,6 @@
 import os
 import time
-import random
-import string
+from multiprocessing import Pool
 
 
 # ===============================
@@ -75,40 +74,40 @@ def processar_arquivo(caminho):
     }
 
 
-
 # ===============================
-# Execução serial
+# Execução paralela
 # ===============================
 
-def executar_serial(pasta):
-    resultados = []
+def executar_paralelo(pasta, n_processos):
+    arquivos = [os.path.join(pasta, f) for f in os.listdir(pasta)]
 
-    inicio = time.time()
+    inicio = time.perf_counter()
 
-    for arquivo in os.listdir(pasta):
-        caminho = os.path.join(pasta, arquivo)
+    with Pool(processes=n_processos) as pool:
+        resultados = pool.map(processar_arquivo, arquivos)
 
-        resultado = processar_arquivo(caminho)
-        resultados.append(resultado)
-
-    fim = time.time()
+    fim = time.perf_counter()
 
     resumo = consolidar_resultados(resultados)
 
-    print("\n=== EXECUÇÃO SERIAL ===")
-    print(f"Arquivos processados: {len(resultados)}")
-    print(f"Tempo total: {fim - inicio:.4f} segundos")
+    return resumo, fim - inicio
 
-    print("\n=== RESULTADO CONSOLIDADO ===")
-    print(f"Total de linhas: {resumo['linhas']}")
-    print(f"Total de palavras: {resumo['palavras']}")
-    print(f"Total de caracteres: {resumo['caracteres']}")
 
-    print("\nContagem de palavras-chave:")
-    for k, v in resumo["contagem"].items():
-        print(f"  {k}: {v}")
+# ===============================
+# Medição com média
+# ===============================
 
-    return resumo
+def medir(exec_func, repeticoes=3):
+    tempos = []
+    resultado_final = None
+
+    for _ in range(repeticoes):
+        resultado, tempo = exec_func()
+        tempos.append(tempo)
+        resultado_final = resultado
+
+    tempo_medio = sum(tempos) / len(tempos)
+    return resultado_final, tempo_medio
 
 
 # ===============================
@@ -118,5 +117,19 @@ def executar_serial(pasta):
 if __name__ == "__main__":
     pasta = "log2"
 
-    print("Executando versão serial...")
-    executar_serial(pasta)
+    for p in [2, 4, 8, 12]:
+        print(f"\nExecutando versão paralela com {p} processos...")
+
+        resumo, tempo = medir(lambda: executar_paralelo(pasta, p))
+
+        print(f"\n=== PARALELO ({p} processos) ===")
+        print(f"Tempo médio: {tempo:.4f} segundos")
+
+        print("\n=== RESULTADO CONSOLIDADO ===")
+        print(f"Total de linhas: {resumo['linhas']}")
+        print(f"Total de palavras: {resumo['palavras']}")
+        print(f"Total de caracteres: {resumo['caracteres']}")
+
+        print("\nContagem de palavras-chave:")
+        for k, v in resumo["contagem"].items():
+            print(f"  {k}: {v}")
