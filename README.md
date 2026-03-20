@@ -63,7 +63,18 @@ Informar as características do hardware e software utilizados na execução dos
 ---
 
 # 3. Metodologia de Testes
+O tempo de execução foi medido utilizando `time.perf_counter()`.
 
+Cada configuração foi executada múltiplas vezes e foi utilizada a média dos tempos para reduzir variações experimentais.
+Os testes foram realizados com o conjunto de dados log2.
+
+Foram avaliadas as seguintes configurações:
+
+- 1 processo (serial)
+- 2 processos
+- 4 processos
+- 8 processos
+- 12 processos
 Explique como os experimentos foram conduzidos.
 
 ## Orientações
