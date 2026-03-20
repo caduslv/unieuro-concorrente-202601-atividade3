@@ -52,13 +52,13 @@ Informar as características do hardware e software utilizados na execução dos
 
 | Item                        | Descrição |
 | --------------------------- | --------- |
-| Processador                 |           |
+| Processador                 |12th Gen Intel(R) Core(TM) i5-12500 3.00 GHz|
 | Número de núcleos           |           |
-| Memória RAM                 |           |
-| Sistema Operacional         |           |
-| Linguagem utilizada         |           |
-| Biblioteca de paralelização |           |
-| Compilador / Versão         |           |
+| Memória RAM                 |16,0 GB (utilizável: 15,7 GB)|
+| Sistema Operacional         |Windows 11 Pro|
+| Linguagem utilizada         |Python|
+| Biblioteca de paralelização |concurrent.futures|
+| Compilador / Versão         |CPython/ 3.13|
 
 ---
 
