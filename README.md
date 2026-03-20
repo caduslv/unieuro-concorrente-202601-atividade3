@@ -10,20 +10,6 @@
 
 # 1. Descrição do Problema
 
-# 1. Descrição do Problema
-
-O problema consiste no processamento de grandes volumes de arquivos de log contendo informações operacionais de um sistema.
-
-O objetivo é extrair métricas como número de linhas, palavras, caracteres e ocorrência de palavras-chave (erro, warning e info).
-
-O algoritmo utilizado realiza leitura sequencial dos arquivos e contagem de ocorrências.
-
-O objetivo da paralelização é reduzir o tempo de execução ao distribuir o processamento entre múltiplos processos.
-
-O volume de dados utilizado nos testes corresponde ao conjunto log2, contendo milhões de registros.
-
-A complexidade do algoritmo é O(n), onde n representa o número total de linhas dos arquivos.
-
 ## Orientações para preenchimento
 
 Explique:
@@ -36,9 +22,16 @@ Explique:
 **Questões que devem ser respondidas:**
 
 * Qual é o objetivo do programa?
+  O objetivo é extrair métricas como número de linhas, palavras, caracteres e ocorrência de palavras-chave (erro, warning e info).
+
 * Qual o volume de dados processado?
+  O volume de dados utilizado nos testes corresponde ao conjunto log2, contendo milhões de registros.
+  
 * Qual algoritmo foi utilizado?
+  O algoritmo utilizado realiza leitura sequencial dos arquivos e contagem de ocorrências.
+
 * Qual a complexidade aproximada do algoritmo?
+  A complexidade do algoritmo é O(n), onde n representa o número total de linhas dos arquivos.
 
 ---
 
@@ -53,7 +46,7 @@ Informar as características do hardware e software utilizados na execução dos
 | Item                        | Descrição |
 | --------------------------- | --------- |
 | Processador                 |12th Gen Intel(R) Core(TM) i5-12500 3.00 GHz|
-| Número de núcleos           |           |
+| Número de núcleos           |6 núcleos (cores) físicos|
 | Memória RAM                 |16,0 GB (utilizável: 15,7 GB)|
 | Sistema Operacional         |Windows 11 Pro|
 | Linguagem utilizada         |Python|
@@ -63,12 +56,6 @@ Informar as características do hardware e software utilizados na execução dos
 ---
 
 # 3. Metodologia de Testes
-O tempo de execução foi medido utilizando `time.perf_counter()`.
-
-Cada configuração foi executada múltiplas vezes e foi utilizada a média dos tempos para reduzir variações experimentais.
-Os testes foram realizados com o conjunto de dados log2.
-
-Foram avaliadas as seguintes configurações:
 
 - 1 processo (serial)
 - 2 processos
@@ -101,8 +88,13 @@ Os experimentos devem ser realizados nas seguintes configurações:
 Descrever:
 
 * Número de execuções para cada configuração
+  Cada configuração de paralelismo (1, 2, 4, 8 e 12 processos) foi executada 3 vezes, sendo utilizado o valor médio dos tempos para reduzir variações experimentais.
+  
 * Forma de cálculo da média
+  O cálculo da média foi feito somando os tempos de cada execução e dividindo pelo número de repetições.
+  
 * Condições de execução (ex: máquina dedicada, carga do sistema, etc.)
+As execuções foram realizadas em máquina local, não dedicada, podendo haver variações de desempenho devido a processos em segundo plano e uso do sistema operacional durante os testes.
 
 ---
 
@@ -117,11 +109,11 @@ Preencha a tabela com os **tempos médios de execução** obtidos.
 
 | Nº Threads/Processos | Tempo de Execução (s) |
 | -------------------- | --------------------- |
-| 1                    |                       |
-| 2                    |                       |
-| 4                    |                       |
-| 8                    |                       |
-| 12                   |                       |
+| 1                    | 93,26                 |
+| 2                    | 49,51                 |
+| 4                    | 28,27                 |
+| 8                    | 18,70                 |
+| 12                   | 17,99                 |
 
 ---
 
@@ -158,11 +150,11 @@ Preencha a tabela abaixo utilizando os tempos medidos.
 
 | Threads/Processos | Tempo (s) | Speedup | Eficiência |
 | ----------------- | --------- | ------- | ---------- |
-| 1                 |           | 1.0     | 1.0        |
-| 2                 |           |         |            |
-| 4                 |           |         |            |
-| 8                 |           |         |            |
-| 12                |           |         |            |
+| 1                 | 93.26     | 1.00    | 1.00       |  
+| 2                 | 49.52     | 1.88    | 0.94       |      
+| 4                 |  28.27    | 3.30    | 0.82       |     
+| 8                 | 18.70     | 4.99    | 0.62       |      
+| 12                | 17.99     | 5.18    | 0.43       |
 
 ---
 
@@ -220,18 +212,36 @@ Realize uma análise crítica dos resultados obtidos.
 ## Questões a serem respondidas
 
 * O speedup obtido foi próximo do ideal?
+Os resultados mostram que o uso de paralelismo reduz significativamente o tempo de execução.
+
 * A aplicação apresentou escalabilidade?
+  A aplicação apresentou escalabilidade parcial, com ganhos significativos até 4 e 8 processos, porém com redução do ganho em 12 processos.
+
 * Em qual ponto a eficiência começou a cair?
+  A eficiência começou a cair a partir de 4 processos, tornando-se mais evidente conforme o número de processos aumenta.
+  
 * O número de threads ultrapassa o número de núcleos físicos da máquina?
+  O número de threads/processos se aproxima e pode ultrapassar a quantidade de núcleos físicos da máquina, o que contribui para perda de desempenho devido à concorrência de recursos.
+  
 * Houve overhead de paralelização?
+  Há presença de overhead de paralelização, causado pela criação de processos, distribuição de tarefas e comunicação entre eles.
+  
 
 Discutir possíveis causas para:
 
 * perda de desempenho
+  As principais causas para a perda de desempenho incluem o custo de sincronização entre processos, limitação de I/O (leitura de arquivos), contenção de memória e cache, além do overhead de gerenciamento do paralelismo.
 * gargalos no algoritmo
+  O gargalo principal do sistema está relacionado ao acesso ao disco e ao custo de coordenação entre processos.
+  
 * sincronização entre threads/processos
+  ocorre quando múltiplos processos precisam coordenar execução e acesso a recursos compartilhados, gerando espera e redução de desempenho.
+  
 * comunicação entre processos
+  envolve o custo de troca de dados entre processos, que no modelo multiprocessing exige serialização e transferência de informações, aumentando o overhead.
+  
 * contenção de memória ou cache
+  acontece quando vários processos competem pelo mesmo recurso de memória ou cache da CPU, causando atrasos devido a acessos simultâneos e perda de eficiência.
 
 ---
 
@@ -242,8 +252,15 @@ Apresente as conclusões do experimento.
 ## Sugestões de pontos a comentar
 
 * O paralelismo trouxe ganho significativo de desempenho?
+  O uso de paralelismo trouxe ganho significativo de desempenho, reduzindo o tempo de execução em comparação à versão serial.
+  
 * Qual foi o melhor número de threads/processos?
+  O melhor desempenho foi observado entre 8 e 12 processos, onde houve a maior redução no tempo total de processamento.
+  
 * O programa escala bem com o aumento do paralelismo?
+  No entanto, o programa não apresenta escalabilidade linear, pois o aumento do número de processos não resulta em ganho proporcional de desempenho.
+  
 * Quais melhorias poderiam ser feitas na implementação?
+  Isso ocorre devido ao overhead de criação e gerenciamento de processos, além de limitações de I/O e contenção de recursos do sistema.
 
 ---
